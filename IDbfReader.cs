@@ -9,8 +9,8 @@ namespace DbfPro
     {
         Int32 GetRecordCount(string path);
         List<string> GetColumnNames(string path);
-        List<string> GetColumnLengths(string path);
+        List<Byte> GetColumnLengths(string path);
         Int32 GetTotalColumnLengths(List<string> columnLengths);
-        DataTable ReadDbf(DataTable tb, string path);
+        void ReadDbf(DataTable tb, string path);
     }
 }
