@@ -1,0 +1,8 @@
+C:\Users\mkohl\Source\Repos\DbfPro\bin\Release\netstandard2.0\DbfPro.deps.json
+C:\Users\mkohl\Source\Repos\DbfPro\bin\Release\netstandard2.0\DbfPro.dll
+C:\Users\mkohl\Source\Repos\DbfPro\bin\Release\netstandard2.0\DbfPro.pdb
+C:\Users\mkohl\Source\Repos\DbfPro\obj\Release\netstandard2.0\DbfPro.AssemblyInfoInputs.cache
+C:\Users\mkohl\Source\Repos\DbfPro\obj\Release\netstandard2.0\DbfPro.AssemblyInfo.cs
+C:\Users\mkohl\Source\Repos\DbfPro\obj\Release\netstandard2.0\DbfPro.csproj.CoreCompileInputs.cache
+C:\Users\mkohl\Source\Repos\DbfPro\obj\Release\netstandard2.0\DbfPro.dll
+C:\Users\mkohl\Source\Repos\DbfPro\obj\Release\netstandard2.0\DbfPro.pdb
