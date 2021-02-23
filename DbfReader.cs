@@ -130,7 +130,7 @@ namespace DbfPro
             }
             return columnLengths;
         }
-        public Int32 GetTotalColumnLengths(List<string> columnLengths)
+        public Int32 GetTotalColumnLengths(List<byte> columnLengths)
         {
             Int32 cnt = 0;
 
@@ -169,7 +169,7 @@ namespace DbfPro
                         headerLength = binaryReader.ReadInt16();
 
                         //get the number of fields
-                        columnCount = Convert.ToInt32(headerLength - 32 / 32);
+                        columnCount = Convert.ToInt32((headerLength - 32) / 32);
 
                         //add columns to datatable
                         for (int i = 0; i < columnCount; i++)
@@ -227,6 +227,8 @@ namespace DbfPro
                                 columnValue = encoding.GetString(binaryReader.ReadBytes(len), 0, len).Trim();
                                 row[ii] = columnValue;
                             }
+
+                            tb.Rows.Add(row);
                         }
                     }
                 }
@@ -237,6 +239,6 @@ namespace DbfPro
                 throw;
             }
 
-        }
+        }        
     }
 } 
