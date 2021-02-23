@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\mkohl\\Source\\Repos\\DbfPro\\DbfPro.csproj": {}
+    "C:\\Users\\mkohl\\source\\repos\\DbfPro\\DbfPro.csproj": {}
   },
   "projects": {
-    "C:\\Users\\mkohl\\Source\\Repos\\DbfPro\\DbfPro.csproj": {
+    "C:\\Users\\mkohl\\source\\repos\\DbfPro\\DbfPro.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\mkohl\\Source\\Repos\\DbfPro\\DbfPro.csproj",
+        "projectUniqueName": "C:\\Users\\mkohl\\source\\repos\\DbfPro\\DbfPro.csproj",
         "projectName": "DbfPro",
-        "projectPath": "C:\\Users\\mkohl\\Source\\Repos\\DbfPro\\DbfPro.csproj",
+        "projectPath": "C:\\Users\\mkohl\\source\\repos\\DbfPro\\DbfPro.csproj",
         "packagesPath": "C:\\Users\\mkohl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\mkohl\\Source\\Repos\\DbfPro\\obj\\",
+        "outputPath": "C:\\Users\\mkohl\\source\\repos\\DbfPro\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

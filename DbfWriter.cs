@@ -17,7 +17,61 @@ namespace DbfPro
 
         public void AddRecords()
         {
-            throw new NotImplementedException();
+            Int32 num;
+            byte[] b = new byte[1];
+
+            try
+            {
+                using (var fileStream = new FileStream(_dbfWriterInfo.Path, FileMode.Open, FileAccess.Write)) 
+                {
+                    using (var binaryWriter = new BinaryWriter(fileStream)) 
+                    {
+                        for (int i = 0; i < _dbfWriterInfo.RecordCount; i++)
+                        {
+                            string value = string.Empty;
+                            b[0] = 32;
+                            binaryWriter.Write(b, 0, 1);
+
+                            for (int n = 0; n < _dbfWriterInfo.ColumnNames.Count; n++)
+                            {
+                                num = Convert.ToInt32(_dbfWriterInfo.ColumnLengths[n]);
+
+                                byte[] columnByte = new byte[num];
+                                value = _dbfWriterInfo.TableRecords.Rows[i][n].ToString();
+
+                                if (string.IsNullOrEmpty(value)) 
+                                {
+                                    value = "";
+                                }
+
+                                //create a character array
+                                value.ToCharArray();
+
+                                //conver to bytes
+                                for (int x = 0; x < num; x++)
+                                {
+                                    if (x > value.Length - 1)
+                                    {
+                                        columnByte[x] = 32;
+                                    }
+                                    else 
+                                    {
+                                        columnByte[x] = Convert.ToByte(Convert.ToSByte(value[x]));
+                                    }
+                                }
+
+                                //write bytes
+                                binaryWriter.Write(columnByte, 0, columnByte.Length);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
         public void CreateFile()
@@ -29,9 +83,9 @@ namespace DbfPro
                 AddRecords();
                 FinalProcessing();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new Exception("Dbf Writer - Problem creating a new dbf file");
+                throw ex;
             }
         }
 
@@ -55,74 +109,82 @@ namespace DbfPro
 
         public void WriteHeader()
         {
-            using (var fileStream = new FileStream(_dbfWriterInfo.Path, FileMode.Open, FileAccess.Write)) 
+            try
             {
-                var headerBytes = new byte[32];
-                byte[] b;
-                const string version = "3"; // dbf version
-                var value = string.Empty;
-                Int32 num;
-                Int32 pos;
-
-                using (var binaryWriter = new BinaryWriter(fileStream)) 
+                using (var fileStream = new FileStream(_dbfWriterInfo.Path, FileMode.Create, FileAccess.Write))
                 {
-                    //dbf version
-                    headerBytes[0] = Convert.ToByte(version);
+                    var headerBytes = new byte[32];
+                    byte[] b;
+                    const string version = "3"; // dbf version
+                    var value = string.Empty;
+                    Int32 num;
+                    Int32 pos;
 
-                    //year
-                    value = DateTime.Now.Year.ToString().Substring(2, 2);
-                    headerBytes[1] = Convert.ToByte(value);
+                    using (var binaryWriter = new BinaryWriter(fileStream))
+                    {
+                        //dbf version
+                        headerBytes[0] = Convert.ToByte(version);
 
-                    //month
-                    value = DateTime.Now.Month.ToString();
-                    headerBytes[2] = Convert.ToByte(value);
+                        //year
+                        value = DateTime.Now.Year.ToString().Substring(2, 2);
+                        headerBytes[1] = Convert.ToByte(value);
 
-                    //day 
-                    value = DateTime.Now.ToString();
-                    headerBytes[3] = Convert.ToByte(value);
+                        //month
+                        value = DateTime.Now.Month.ToString();
+                        headerBytes[2] = Convert.ToByte(value);
 
-                    //number of records in the table (default to zeros)
-                    headerBytes[4] = 0;
-                    headerBytes[5] = 0;
-                    headerBytes[6] = 0;
-                    headerBytes[7] = 0;
+                        //day 
+                        value = DateTime.Now.Day.ToString();
+                        headerBytes[3] = Convert.ToByte(value);
 
-                    //number of bytes in the header
-                    num = (_dbfWriterInfo.ColumnNames.Count + 1) * 32 + 1;
-                    pos = num;
+                        //number of records in the table (default to zeros)
+                        headerBytes[4] = 0;
+                        headerBytes[5] = 0;
+                        headerBytes[6] = 0;
+                        headerBytes[7] = 0;
 
-                    b = BitConverter.GetBytes(num);
-                    headerBytes[8] = b[0];
-                    headerBytes[9] = b[1];
+                        //number of bytes in the header
+                        num = (_dbfWriterInfo.ColumnNames.Count + 1) * 32 + 1;
+                        pos = num;
 
-                    //length of each record
-                    num = _dbfWriterInfo.ColumnLengthTotal + 1;
-                    b = BitConverter.GetBytes(num);
-                    headerBytes[10] = b[0];
-                    headerBytes[11] = b[1];
+                        b = BitConverter.GetBytes(num);
+                        headerBytes[8] = b[0];
+                        headerBytes[9] = b[1];
 
-                    headerBytes[12] = 0;
-                    headerBytes[13] = 0;
-                    headerBytes[14] = 0;
-                    headerBytes[15] = 0;
-                    headerBytes[16] = 0;
-                    headerBytes[17] = 0;
-                    headerBytes[18] = 0;
-                    headerBytes[19] = 0;
-                    headerBytes[20] = 0;
-                    headerBytes[21] = 0;
-                    headerBytes[22] = 0;
-                    headerBytes[23] = 0;
-                    headerBytes[24] = 0;
-                    headerBytes[25] = 0;
-                    headerBytes[26] = 0;
-                    headerBytes[27] = 0;
-                    headerBytes[28] = 0;
-                    headerBytes[29] = 0;
-                    headerBytes[30] = 0;
-                    headerBytes[31] = 0;
-                    binaryWriter.Write(headerBytes, 0, headerBytes.Length);
+                        //length of each record
+                        num = _dbfWriterInfo.ColumnLengthTotal + 1;
+                        b = BitConverter.GetBytes(num);
+                        headerBytes[10] = b[0];
+                        headerBytes[11] = b[1];
+
+                        headerBytes[12] = 0;
+                        headerBytes[13] = 0;
+                        headerBytes[14] = 0;
+                        headerBytes[15] = 0;
+                        headerBytes[16] = 0;
+                        headerBytes[17] = 0;
+                        headerBytes[18] = 0;
+                        headerBytes[19] = 0;
+                        headerBytes[20] = 0;
+                        headerBytes[21] = 0;
+                        headerBytes[22] = 0;
+                        headerBytes[23] = 0;
+                        headerBytes[24] = 0;
+                        headerBytes[25] = 0;
+                        headerBytes[26] = 0;
+                        headerBytes[27] = 0;
+                        headerBytes[28] = 0;
+                        headerBytes[29] = 0;
+                        headerBytes[30] = 0;
+                        headerBytes[31] = 0;
+                        binaryWriter.Write(headerBytes, 0, headerBytes.Length);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+
+                throw e;
             }
         }
 
