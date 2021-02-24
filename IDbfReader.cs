@@ -11,6 +11,6 @@ namespace DbfPro
         List<string> GetColumnNames(string path);
         List<Byte> GetColumnLengths(string path);
         Int32 GetTotalColumnLengths(List<byte> columnLengths);
-        void ReadDbf(DataTable tb, string path);        
+        bool ReadDbf(DataTable tb, string path);        
     }
 }

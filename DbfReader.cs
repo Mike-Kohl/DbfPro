@@ -141,14 +141,11 @@ namespace DbfPro
 
             return cnt;
         }
-        public void ReadDbf(DataTable tb, string path)
+        public bool ReadDbf(DataTable tb, string path)
         {
-            Int32 headerLength = 0;
             Int32 recordCount = 0;
             Int32 columnCount = 0;
             Int32 position = 0;
-            Int32 offSet = 0;
-            long location = 0;
             var columnLengths = new List<Byte>();
             var encoding = new ASCIIEncoding();
 
@@ -166,7 +163,7 @@ namespace DbfPro
                         //move to position that contains header length
                         fileStream.Seek(8, SeekOrigin.Begin);
 
-                        headerLength = binaryReader.ReadInt16();
+                        int headerLength = binaryReader.ReadInt16();
 
                         //get the number of fields
                         columnCount = Convert.ToInt32((headerLength - 32) / 32);
@@ -199,7 +196,7 @@ namespace DbfPro
                             tb.Columns.Add(columnName);
 
                             //get column length
-                            offSet = position + 16;
+                            int offSet = position + 16;
                             fileStream.Seek(offSet, SeekOrigin.Begin);
                             columnLengths.Add(binaryReader.ReadByte());
                         }
@@ -212,7 +209,7 @@ namespace DbfPro
                         DataRow row;
                         for (int i = 0; i < recordCount; i++)
                         {
-                            location = fileStream.Position;
+                            long location = fileStream.Position;
 
                             //record deletion value
                             binaryReader.ReadChar();
@@ -233,12 +230,14 @@ namespace DbfPro
                     }
                 }
             }
-            catch (Exception)
+            catch (IOException)
             {
-
-                throw;
+                // file is locked
+                return true;
             }
 
+            // file is not locked
+            return false;
         }        
     }
 } 
