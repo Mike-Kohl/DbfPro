@@ -2,19 +2,58 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Text;
 
 namespace DbfPro
 {
     public class DbfWriter : IDbfWriter
     {
-        DbfWriterInfo _dbfWriterInfo;       
+        string _path;
+        List<string> _columnNames;
+        List<byte> _columnLengths;
+        int _columnLengthsTotal;
+        int _recordCount;
+        DataTable _dataTable;
+        string _fileName;
 
-        public DbfWriter(DbfWriterInfo dbfWriterInfo) 
+        public DbfWriter(
+            string path, 
+            List<string> columnNames, 
+            List<byte> columnLengths, 
+            int columnLengthsTotal, 
+            int recordCount, 
+            DataTable dataTable, 
+            string fileName) 
         {
-            _dbfWriterInfo = dbfWriterInfo; 
+            _path = path;
+            _columnNames = columnNames;
+            _columnLengths = columnLengths;
+            _columnLengthsTotal = columnLengthsTotal;
+            _recordCount = recordCount;
+            _dataTable = dataTable;
+            _fileName = fileName;
         }
 
+        public void CreateFile()
+        {
+            try
+            {
+                using (var fileStream = new FileStream(_path, FileMode.Create, FileAccess.Write))
+                {
+                    using (var binaryWriter = new BinaryWriter(fileStream))
+                    {
+                        WriteHeader(fileStream, binaryWriter);
+                        WriteHeaderRecords(fileStream, binaryWriter);
+                        AddRecords(binaryWriter);
+                        FinalProcessing(binaryWriter);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        
         public void AddRecords(BinaryWriter binaryWriter)
         {
             Int32 num;
@@ -22,18 +61,18 @@ namespace DbfPro
 
             try
             {
-                for (int i = 0; i < _dbfWriterInfo.RecordCount; i++)
+                for (int i = 0; i < _recordCount; i++)
                 {
                     string value = string.Empty;
                     b[0] = 32;
                     binaryWriter.Write(b, 0, 1);
 
-                    for (int n = 0; n < _dbfWriterInfo.ColumnNames.Count; n++)
+                    for (int n = 0; n < _columnNames.Count; n++)
                     {
-                        num = Convert.ToInt32(_dbfWriterInfo.ColumnLengths[n]);
+                        num = Convert.ToInt32(_columnLengths[n]);
 
                         byte[] columnByte = new byte[num];
-                        value = _dbfWriterInfo.TableRecords.Rows[i][n].ToString();
+                        value = _dataTable.Rows[i][n].ToString();
 
                         if (string.IsNullOrEmpty(value))
                         {
@@ -66,28 +105,7 @@ namespace DbfPro
 
                 throw;
             }
-        }
-
-        public void CreateFile()
-        {
-            try
-            {
-                using (var fileStream = new FileStream(_dbfWriterInfo.Path, FileMode.Create, FileAccess.Write))  
-                {
-                    using (var binaryWriter = new BinaryWriter(fileStream)) 
-                    {
-                        WriteHeader(fileStream, binaryWriter);
-                        WriteHeaderRecords(fileStream, binaryWriter);
-                        AddRecords(binaryWriter);
-                        FinalProcessing(binaryWriter);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
+        }               
 
         public void FinalProcessing(BinaryWriter binaryWriter)
         {
@@ -95,7 +113,7 @@ namespace DbfPro
             Int32 num;
 
             binaryWriter.Seek(4, SeekOrigin.Begin);
-            num = _dbfWriterInfo.RecordCount;
+            num = _recordCount;
             recordBytes = BitConverter.GetBytes(num);
             binaryWriter.Write(recordBytes, 0, 4); 
         }
@@ -133,7 +151,7 @@ namespace DbfPro
                 headerBytes[7] = 0;
 
                 //number of bytes in the header
-                num = (_dbfWriterInfo.ColumnNames.Count + 1) * 32 + 1;
+                num = (_columnNames.Count + 1) * 32 + 1;
                 pos = num;
 
                 b = BitConverter.GetBytes(num);
@@ -141,7 +159,7 @@ namespace DbfPro
                 headerBytes[9] = b[1];
 
                 //length of each record
-                num = _dbfWriterInfo.ColumnLengthTotal + 1;
+                num = _columnLengthsTotal + 1;
                 b = BitConverter.GetBytes(num);
                 headerBytes[10] = b[0];
                 headerBytes[11] = b[1];
@@ -185,10 +203,10 @@ namespace DbfPro
             //move to position 32
             fileStream.Seek(32, SeekOrigin.Begin);
 
-            for (int i = 0; i < _dbfWriterInfo.ColumnNames.Count; i++)
+            for (int i = 0; i < _columnNames.Count; i++)
             {
-                columnName = _dbfWriterInfo.ColumnNames[i];
-                columnLength = Convert.ToInt32(_dbfWriterInfo.ColumnLengths[i]);
+                columnName = _columnNames[i];
+                columnLength = Convert.ToInt32(_columnLengths[i]);
                 num = columnName.Length;
 
                 //note column names cannot be longer than 10

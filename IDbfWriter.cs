@@ -1,10 +1,12 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.Data;
+using System.IO;
 
 namespace DbfPro
 {
     interface IDbfWriter
     {
-        void CreateFile();
+        void CreateFile();            
         void WriteHeader(FileStream fileStream, BinaryWriter binaryWriter);
         void WriteHeaderRecords(FileStream fileStream, BinaryWriter binaryWriter);
         void AddRecords(BinaryWriter binaryWriter);

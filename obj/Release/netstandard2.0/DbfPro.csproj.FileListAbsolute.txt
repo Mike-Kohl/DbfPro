@@ -6,3 +6,4 @@ C:\Users\mkohl\Source\Repos\DbfPro\obj\Release\netstandard2.0\DbfPro.AssemblyInf
 C:\Users\mkohl\Source\Repos\DbfPro\obj\Release\netstandard2.0\DbfPro.csproj.CoreCompileInputs.cache
 C:\Users\mkohl\Source\Repos\DbfPro\obj\Release\netstandard2.0\DbfPro.dll
 C:\Users\mkohl\Source\Repos\DbfPro\obj\Release\netstandard2.0\DbfPro.pdb
+C:\Users\mkohl\source\repos\DbfPro\obj\Release\netstandard2.0\DbfPro.csprojAssemblyReference.cache
