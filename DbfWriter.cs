@@ -32,7 +32,6 @@ namespace DbfPro
             _dataTable = dataTable;
             _fileName = fileName;
         }
-
         public void CreateFile()
         {
             try
@@ -53,71 +52,6 @@ namespace DbfPro
                 throw ex;
             }
         }
-        
-        public void AddRecords(BinaryWriter binaryWriter)
-        {
-            Int32 num;
-            byte[] b = new byte[1];
-
-            try
-            {
-                for (int i = 0; i < _recordCount; i++)
-                {
-                    string value = string.Empty;
-                    b[0] = 32;
-                    binaryWriter.Write(b, 0, 1);
-
-                    for (int n = 0; n < _columnNames.Count; n++)
-                    {
-                        num = Convert.ToInt32(_columnLengths[n]);
-
-                        byte[] columnByte = new byte[num];
-                        value = _dataTable.Rows[i][n].ToString();
-
-                        if (string.IsNullOrEmpty(value))
-                        {
-                            value = "";
-                        }
-
-                        //create a character array
-                        value.ToCharArray();
-
-                        //conver to bytes
-                        for (int x = 0; x < num; x++)
-                        {
-                            if (x > value.Length - 1)
-                            {
-                                columnByte[x] = 32;
-                            }
-                            else
-                            {
-                                columnByte[x] = Convert.ToByte(Convert.ToSByte(value[x]));
-                            }
-                        }
-
-                        //write bytes
-                        binaryWriter.Write(columnByte, 0, columnByte.Length);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }               
-
-        public void FinalProcessing(BinaryWriter binaryWriter)
-        {
-            byte[] recordBytes;
-            Int32 num;
-
-            binaryWriter.Seek(4, SeekOrigin.Begin);
-            num = _recordCount;
-            recordBytes = BitConverter.GetBytes(num);
-            binaryWriter.Write(recordBytes, 0, 4); 
-        }
-
         public void WriteHeader(FileStream fileStream, BinaryWriter binaryWriter)
         {
             try
@@ -192,7 +126,6 @@ namespace DbfPro
                 throw e;
             }
         }
-
         public void WriteHeaderRecords(FileStream fileStream, BinaryWriter binaryWriter)
         {
             var recordBytes = new byte[32];
@@ -259,6 +192,68 @@ namespace DbfPro
             byte[] terminator = new byte[1];
             terminator[0] = 13;
             binaryWriter.Write(terminator, 0, 1);
+        }
+        public void AddRecords(BinaryWriter binaryWriter)
+        {
+            Int32 num;
+            byte[] b = new byte[1];
+
+            try
+            {
+                for (int i = 0; i < _recordCount; i++)
+                {
+                    string value = string.Empty;
+                    b[0] = 32;
+                    binaryWriter.Write(b, 0, 1);
+
+                    for (int n = 0; n < _columnNames.Count; n++)
+                    {
+                        num = Convert.ToInt32(_columnLengths[n]);
+
+                        byte[] columnByte = new byte[num];
+                        value = _dataTable.Rows[i][n].ToString();
+
+                        if (string.IsNullOrEmpty(value))
+                        {
+                            value = "";
+                        }
+
+                        //create a character array
+                        value.ToCharArray();
+
+                        //conver to bytes
+                        for (int x = 0; x < num; x++)
+                        {
+                            if (x > value.Length - 1)
+                            {
+                                columnByte[x] = 32;
+                            }
+                            else
+                            {
+                                columnByte[x] = Convert.ToByte(Convert.ToSByte(value[x]));
+                            }
+                        }
+
+                        //write bytes
+                        binaryWriter.Write(columnByte, 0, columnByte.Length);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }               
+        public void FinalProcessing(BinaryWriter binaryWriter)
+        {
+            byte[] recordBytes;
+            Int32 num;
+
+            binaryWriter.Seek(4, SeekOrigin.Begin);
+            num = _recordCount;
+            recordBytes = BitConverter.GetBytes(num);
+            binaryWriter.Write(recordBytes, 0, 4); 
         }
     }
 }
