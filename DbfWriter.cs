@@ -32,7 +32,7 @@ namespace DbfPro
             _dataTable = dataTable;
             _fileName = fileName;
         }
-        public void CreateFile()
+        public bool CreateFile()
         {
             try
             {
@@ -46,6 +46,12 @@ namespace DbfPro
                         FinalProcessing(binaryWriter);
                     }
                 }
+
+                return false;
+            }
+            catch (IOException iex) 
+            {
+                return true;
             }
             catch (Exception ex)
             {

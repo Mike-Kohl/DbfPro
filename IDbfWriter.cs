@@ -6,7 +6,7 @@ namespace DbfPro
 {
     interface IDbfWriter
     {
-        void CreateFile();            
+        bool CreateFile();            
         void WriteHeader(FileStream fileStream, BinaryWriter binaryWriter);
         void WriteHeaderRecords(FileStream fileStream, BinaryWriter binaryWriter);
         void AddRecords(BinaryWriter binaryWriter);
